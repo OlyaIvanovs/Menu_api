@@ -4,12 +4,12 @@ from .models import Recipe, IngredientsRecipes, Ingredient
 
 
 class IngredientsRecipesSerializer(serializers.ModelSerializer):
-    ingredient_name = serializers.ReadOnlyField(source='ingredient.name')
-    ingredient_unit = serializers.ReadOnlyField(source='ingredient.unit')
+    name = serializers.ReadOnlyField(source='ingredient.name')
+    unit = serializers.ReadOnlyField(source='ingredient.unit')
 
     class Meta:
         model = IngredientsRecipes
-        fields = ('ingredient_unit', 'ingredient_name', 'amount')
+        fields = ('name', 'amount', 'unit')
 
 
 class IngredientSerializer(serializers.ModelSerializer):
