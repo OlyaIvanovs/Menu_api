@@ -8,6 +8,7 @@ from rest_framework.response import Response
 
 from .serializers import RecipeSerializer, CategorySerializer
 from .models import Recipe, IngredientsRecipes, Ingredient, Category
+from .forms import RecipeForm, CategoryForm
 
 
 class RecipeList(APIView):
@@ -60,3 +61,27 @@ def recipe(request, recipe_id):
         'recipe': recipe
     }
     return render(request, 'recipe.html', context); 
+
+
+def addRecipe(request):
+    if request.method == 'POST':
+        form = RecipeForm(request.POST)
+        if form.is_valid():
+            recipe = form.save()
+            return redirect('index')
+    else:
+        form = RecipeForm()
+
+    return render(request, 'add_recipe.html', {'form': form})
+
+
+def addCategory(request):
+    if request.method == 'POST':
+        form = CategoryForm(request.POST)
+        if form.is_valid():
+            recipe = form.save()
+            return redirect('index')
+    else:
+        form = CategoryForm()
+
+    return render(request, 'add_category.html', {'form': form})

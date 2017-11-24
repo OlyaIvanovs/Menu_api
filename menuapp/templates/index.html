@@ -1,18 +1,21 @@
 {% extends "base.html" %}
 
 {% block content %}   
+<a href="{% url 'add_recipe' %}">Add a new recipe</a>
+<a href="{% url 'add_category' %}">Add a new category</a>
+<ul>
 {% for recipe in recipes %}
-    <ul>
-        <li>
-            <h2><a href="{% url 'recipe' recipe.id %}">{{ recipe.title }}</a></h2>
-            <h3>Ingredients:</h3>
-            <ul>
-                {% for ingredient in recipe.ingredientsrecipes_set.all %}
-                    <li>{{ ingredient.ingredient.name }} : {{ ingredient.amount }} {{ ingredient.ingredient.unit }}</li>
-                {% endfor %}
-            </ul>
-            <p>{{ recipe.method }}</p>
-            <p><b>Category:</b> {{ recipe.category }}</p>
-    {% endfor %}
-    </ul>
+    <li>
+        <h2><a href="{% url 'recipe' recipe.id %}">{{ recipe.title }}</a></h2>
+        <h3>Ingredients:</h3>
+        <ul>
+            {% for ingredient in recipe.ingredientsrecipes_set.all %}
+                <li>{{ ingredient.ingredient.name }} : {{ ingredient.amount }} {{ ingredient.ingredient.unit }}</li>
+            {% endfor %}
+        </ul>
+        <p>{{ recipe.method }}</p>
+        <p><b>Category:</b> {{ recipe.category }}</p>
+    </li>
+{% endfor %}
+</ul>
 {% endblock content %}  
