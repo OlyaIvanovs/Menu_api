@@ -2,20 +2,19 @@ from rest_framework import serializers
 from .models import Recipe, IngredientsRecipes, Ingredient, Category
 
 
-
-class IngredientsRecipesSerializer(serializers.ModelSerializer):
-    name = serializers.ReadOnlyField(source='ingredient.name')
-    unit = serializers.ReadOnlyField(source='ingredient.unit')
-
-    class Meta:
-        model = IngredientsRecipes
-        fields = ('name', 'amount', 'unit')
-
-
 class IngredientSerializer(serializers.ModelSerializer):
     class Meta:
         model = Ingredient
-        fields = ('name', 'unit')
+        fields = ('name', )
+
+
+class IngredientsRecipesSerializer(serializers.ModelSerializer):
+    name = serializers.CharField(source='ingredient.name')
+
+    class Meta:
+        model = IngredientsRecipes
+        fields = ('unit', 'addinfo', 'amount', 'name')
+
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
@@ -24,9 +23,26 @@ class CategorySerializer(serializers.ModelSerializer):
 
 
 class RecipeSerializer(serializers.ModelSerializer):
-    category = serializers.StringRelatedField()
+    # category = serializers.StringRelatedField()
+    category = serializers.CharField(source='category.name')
     ingredients = IngredientsRecipesSerializer(source='ingredientsrecipes_set', many=True)
 
     class Meta:
         model = Recipe
-        fields = ('id', 'title', 'method', 'category', 'ingredients')
+        fields = ('id', 'title', 'method', 'category','ingredients')
+        depth = 1
+
+    # def to_representation(self, instance):
+    #     representation = super(RecipeSerializer, self).to_representation(instance)
+    #     representation['category'] = instance.category.name
+    #     return representation
+
+    def create(self, validated_data):
+        ingredients_data = validated_data.pop('ingredientsrecipes_set')
+        category_data = validated_data.pop('category')
+        category_name, created = Category.objects.get_or_create(name=category_data['name'])
+        recipe = Recipe.objects.create(**validated_data, category=category_name)
+        for ing in ingredients_data:
+            i, created = Ingredient.objects.get_or_create(name=ing['ingredient']['name'])
+            IngredientsRecipes.objects.create(recipe=recipe, ingredient=i, unit=ing['unit'], amount=ing['amount'])
+        return recipe

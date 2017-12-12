@@ -9,7 +9,11 @@ from rest_framework import status
 
 from .serializers import RecipeSerializer, CategorySerializer
 from .models import Recipe, IngredientsRecipes, Ingredient, Category
-from .forms import RecipeForm, CategoryForm
+
+
+from .forms import  CategoryForm
+# from .forms import RecipeForm, CategoryForm
+
 
 
 class RecipeList(APIView):
@@ -19,9 +23,31 @@ class RecipeList(APIView):
         serializer = RecipeSerializer(recipes , many=True)
         return Response(serializer.data)
 
-    def post(self):
-        pass
+    def post(self, request):
+        serializer = RecipeSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
+
+
+        # import ipdb; ipdb.set_trace()
+        # recipe = Recipe(title='vadf', method='sfd')
+        # recipe.save()
+
+        # Recipe.objects.create(...)
+
+        # return Response({}, stat)
+
+        # serializer = RecipeSerializer(data=request.data)
+        # print(request.data);
+        # if serializer.is_valid():
+        #     serializer.save()
+        #     return Response(serializer.data, status=status.HTTP_201_CREATED)
+        # return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
 
 class CategoryList(APIView):
 
@@ -38,15 +64,12 @@ class CategoryList(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class RecipeAPI(APIView):
+class RecipeDetail(APIView):
 
     def get(self, request, recipe_id):
         recipe = Recipe.objects.get(id=recipe_id)
         serializer = RecipeSerializer(recipe);
         return Response(serializer.data)
-
-    def post(self):
-        pass
 
 
 

@@ -1,10 +1,10 @@
 from django.forms import ModelForm
 from .models import Recipe, Category
 
-class RecipeForm(ModelForm):
-    class Meta:
-        model = Recipe
-        fields = ('title', 'method', 'category')
+# class RecipeForm(ModelForm):
+#     class Meta:
+#         model = Recipe
+#         fields = ('title', 'method', 'ingredients')
         # fields = '__all__'
 
 
