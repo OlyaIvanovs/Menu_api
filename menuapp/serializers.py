@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Recipe, IngredientsRecipes, Ingredient, Category
+from .models import Recipe, IngredientsRecipes, Ingredient, Category, Week, WeeksRecipes
 
 
 class IngredientSerializer(serializers.ModelSerializer):
@@ -16,32 +16,46 @@ class IngredientsRecipesSerializer(serializers.ModelSerializer):
         fields = ('unit', 'addinfo', 'amount', 'name')
 
 
+class WeeksRecipesSerializer(serializers.ModelSerializer):
+    name = serializers.CharField(source='week.name')
+    
+    class Meta:
+        model = WeeksRecipes
+        fields = ('name', )
+
+
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
         fields = '__all__'
 
 
+class WeekSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Week
+        fields = ('name', )
+
+
 class RecipeSerializer(serializers.ModelSerializer):
-    # category = serializers.StringRelatedField()
-    category = serializers.CharField(source='category.name')
+    category = serializers.CharField(source='category.id')
     ingredients = IngredientsRecipesSerializer(source='ingredientsrecipes_set', many=True)
+    weeks = WeeksRecipesSerializer(source='weeksrecipes_set', many=True)
 
     class Meta:
         model = Recipe
-        fields = ('id', 'title', 'method', 'category','ingredients')
+        fields = ('id', 'title', 'method', 'category','ingredients', 'weeks')
         depth = 1
 
-    # def to_representation(self, instance):
-    #     representation = super(RecipeSerializer, self).to_representation(instance)
-    #     representation['category'] = instance.category.name
-    #     return representation
+    def to_representation(self, instance):
+        representation = super(RecipeSerializer, self).to_representation(instance)
+        representation['category'] = instance.category.name       
+        return representation
 
     def create(self, validated_data):
         ingredients_data = validated_data.pop('ingredientsrecipes_set')
         category_data = validated_data.pop('category')
-        category_name, created = Category.objects.get_or_create(name=category_data['name'])
-        recipe = Recipe.objects.create(**validated_data, category=category_name)
+        category_id, created = Category.objects.get_or_create(id=category_data['id'])
+        recipe = Recipe.objects.create(**validated_data, category=category_id)
         for ing in ingredients_data:
             i, created = Ingredient.objects.get_or_create(name=ing['ingredient']['name'])
             IngredientsRecipes.objects.create(recipe=recipe, ingredient=i, unit=ing['unit'], amount=ing['amount'])
