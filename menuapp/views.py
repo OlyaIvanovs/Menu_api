@@ -13,7 +13,10 @@ from .forms import  CategoryForm
 
 class RecipeList(APIView):
     def get(self, request):
+        week = request.GET.get('week')
         recipes = Recipe.objects.all()
+        if week:
+            recipes = recipes.filter(weeks__id=week)
         serializer = RecipeSerializer(recipes , many=True)
         return Response(serializer.data)
 
@@ -43,6 +46,13 @@ class WeekList(APIView):
     def get(self, request):
         weeks = Week.objects.all()
         serializer = WeekSerializer(weeks, many=True)
+        return Response(serializer.data)
+
+
+class WeekDetail(APIView):
+    def get(self, request, week_id):
+        week = Week.objects.get(id=week_id)
+        serializer = WeekSerializer(week);
         return Response(serializer.data)
 
 

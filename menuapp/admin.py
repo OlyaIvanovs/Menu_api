@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Recipe, Ingredient, Category, IngredientsRecipes, WeeksRecipes, Week
+from .models import Recipe, Ingredient, Category, IngredientsRecipes, Week
 
 class IngredientAdmin(admin.ModelAdmin):
     list_display = ('name', )
@@ -18,4 +18,3 @@ admin.site.register(Ingredient, IngredientAdmin)
 admin.site.register(Week, WeekAdmin)
 admin.site.register(Category)
 admin.site.register(IngredientsRecipes, IngredientsRecipesAdmin)
-admin.site.register(WeeksRecipes, WeeksRecipesAdmin)

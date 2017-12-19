@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Recipe, IngredientsRecipes, Ingredient, Category, Week, WeeksRecipes
+from .models import Recipe, IngredientsRecipes, Ingredient, Category, Week
 
 
 class IngredientSerializer(serializers.ModelSerializer):
@@ -16,14 +16,6 @@ class IngredientsRecipesSerializer(serializers.ModelSerializer):
         fields = ('unit', 'addinfo', 'amount', 'name')
 
 
-class WeeksRecipesSerializer(serializers.ModelSerializer):
-    name = serializers.CharField(source='week.name')
-    
-    class Meta:
-        model = WeeksRecipes
-        fields = ('name', )
-
-
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
@@ -33,13 +25,12 @@ class CategorySerializer(serializers.ModelSerializer):
 class WeekSerializer(serializers.ModelSerializer):
     class Meta:
         model = Week
-        fields = ('name', )
+        fields = '__all__'
 
 
 class RecipeSerializer(serializers.ModelSerializer):
     category = serializers.CharField(source='category.id')
     ingredients = IngredientsRecipesSerializer(source='ingredientsrecipes_set', many=True)
-    weeks = WeeksRecipesSerializer(source='weeksrecipes_set', many=True)
 
     class Meta:
         model = Recipe
