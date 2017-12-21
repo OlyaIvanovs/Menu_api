@@ -51,3 +51,14 @@ class RecipeSerializer(serializers.ModelSerializer):
             i, created = Ingredient.objects.get_or_create(name=ing['ingredient']['name'])
             IngredientsRecipes.objects.create(recipe=recipe, ingredient=i, unit=ing['unit'], amount=ing['amount'])
         return recipe
+
+    def update(self, instance, validated_data):
+        # category_data = validated_data.pop('category')
+        # category, created = Category.objects.get_or_create(id=category_data['id'])
+        # instance.category = validated_data.get('category', category) 
+        week_id = self.context.get('week', '')
+        if week_id:
+            week = Week.objects.get(id=week_id)
+            instance.weeks.add(week)  
+        instance.save()
+        return instance

@@ -6,6 +6,7 @@ from rest_framework import status
 
 from .serializers import RecipeSerializer, CategorySerializer, WeekSerializer
 from .models import Recipe, IngredientsRecipes, Category, Week
+from django.shortcuts import render
 
 from .forms import  CategoryForm
 
@@ -61,6 +62,18 @@ class RecipeDetail(APIView):
         recipe = Recipe.objects.get(id=recipe_id)
         serializer = RecipeSerializer(recipe);
         return Response(serializer.data)
+
+    def put(self, request, recipe_id, format=None):
+        recipe = Recipe.objects.get(id=recipe_id)
+        data_context = {'week': request.data.get('week', '')}
+        serializer = RecipeSerializer(recipe, data=request.data, partial=True, context=data_context)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def get_serializer_context(self):
+        return {"week": self.kwargs['week']}
 
 
 def index(request):
