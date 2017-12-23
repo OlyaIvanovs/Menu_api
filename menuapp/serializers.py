@@ -57,8 +57,12 @@ class RecipeSerializer(serializers.ModelSerializer):
         # category, created = Category.objects.get_or_create(id=category_data['id'])
         # instance.category = validated_data.get('category', category) 
         week_id = self.context.get('week', '')
+        remove_week = self.context.get('remove', False)
         if week_id:
             week = Week.objects.get(id=week_id)
-            instance.weeks.add(week)  
+            if remove_week:
+                instance.weeks.remove(week) 
+            else:
+                instance.weeks.add(week)  
         instance.save()
         return instance

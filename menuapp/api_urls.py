@@ -9,6 +9,7 @@ urlpatterns = [
     url(r'weeks/(?P<week_id>\w{0,50})/$', views.WeekDetail.as_view()),
     url(r'recipes/$', views.RecipeList.as_view()),
     url(r'recipes/(?P<recipe_id>\w{0,50})/$', views.RecipeDetail.as_view()),
+    url(r'recipes/(?P<recipe_id>\w{0,50})/removeweek/$', views.RecipRemoveWeek.as_view()),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)

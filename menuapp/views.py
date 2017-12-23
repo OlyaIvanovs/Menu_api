@@ -72,9 +72,17 @@ class RecipeDetail(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def get_serializer_context(self):
-        return {"week": self.kwargs['week']}
 
+class RecipRemoveWeek(APIView):
+
+    def put(self, request, recipe_id, format=None):
+        recipe = Recipe.objects.get(id=recipe_id)
+        data_context = {'week': request.data.get('week', ''), 'remove': True}
+        serializer = RecipeSerializer(recipe, data=request.data, partial=True, context=data_context)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 def index(request):
     recipes = Recipe.objects.all()
